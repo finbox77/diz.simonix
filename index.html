@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Первичный пробный дизайн будущей платформы</title>
+<!-- ============================================================
+     КАК ДОБАВЛЯТЬ СВОИ СКРИНЫ — КОД ПРАВИТЬ НЕ НУЖНО.
+     Кладите файлы в папку screens/ рядом с index.html.
+     В каждом разделе подхватывается ЛЮБОЕ число файлов (от 1 до 12):
+
+       screens/main-1.png … main-12.png     — Главная страница
+       screens/card-1.png … card-12.png     — Карточка товара
+       screens/seller-1.png … seller-12.png — Кабинет продавца
+       screens/edit-1.png … edit-12.png     — Редактирование товара
+
+     Сколько файлов положите — столько скриншотов и встанет в сетку.
+     Пока в разделе нет ни одного файла — показывается заглушка.
+     После добавления файлов обновите страницу с Ctrl+F5.
+
+     В подвале — переключатель цвета акцента:
+     оранжевый #FF6B2C (текущий) / голубой #93B2CD / серо-коричневый #837363.
+============================================================= -->
+<style>
+  :root{
+    --bg:#F2EFEA;
+    --ink:#26272A;
+    --panel:#26272A;
+    --panel2:#2A2D31;
+    --accent:#FF6B2C;
+    --accent-dark:#E85A1D;
+    --line:#DED8CC;
+    --muted:#8D877B;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.55 -apple-system,'Segoe UI',Roboto,'PT Sans',Arial,sans-serif;
+  }
+  /* ---------- шапка ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:20;
+    background:var(--panel); border-bottom:3px solid var(--accent);
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    padding:10px 22px;
+  }
+  .logo{color:#fff; font-weight:800; font-size:20px; letter-spacing:.5px; line-height:1.1; margin-right:8px}
+  .logo b{color:var(--accent)}
+  .logo small{display:block; font-size:9px; letter-spacing:.38em; color:#9AA0A6; font-weight:600}
+  .chip{
+    color:#EDEDEF; text-decoration:none; background:var(--panel2);
+    border:1px solid #3A3F45; border-radius:8px; padding:7px 14px; font-size:14px;
+    transition:border-color .15s,color .15s;
+  }
+  .chip:hover{border-color:var(--accent); color:var(--accent)}
+  .badge{
+    margin-left:auto; color:var(--accent); border:1px solid var(--accent);
+    border-radius:999px; padding:6px 14px; font-size:12px; letter-spacing:.12em;
+    text-transform:uppercase; font-weight:700;
+  }
+  /* ---------- герой ---------- */
+  .hero{max-width:1160px; margin:0 auto; padding:54px 24px 6px}
+  h1{margin:0 0 14px; font-size:clamp(28px,4.6vw,46px); line-height:1.14; font-weight:800}
+  .sub{color:var(--muted); max-width:820px; margin:0}
+  .sub b{color:var(--ink)}
+  /* ---------- секции ---------- */
+  section{max-width:1160px; margin:0 auto; padding:36px 24px; scroll-margin-top:86px}
+  .sec-head{display:flex; align-items:center; gap:14px}
+  .num{background:var(--panel); color:var(--accent); font-weight:800; font-size:15px; padding:6px 12px; border-radius:8px}
+  h2{margin:0; font-size:clamp(20px,2.6vw,28px); font-weight:800}
+  .rule{height:3px; width:76px; background:var(--accent); border-radius:2px; margin:12px 0 18px}
+  .desc{
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.7);
+    border-radius:10px; padding:14px 18px; color:#6B655C;
+    font-size:15px; margin:0 0 22px;
+  }
+  .shots{display:grid; gap:22px; grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+  .shots.single{grid-template-columns:1fr; max-width:980px}
+  figure.shotwrap{
+    margin:0; background:var(--card); border-radius:12px; padding:10px;
+    box-shadow:0 10px 26px rgba(38,39,42,.10);
+  }
+  img.shot{
+    display:block; width:100%; border-radius:8px; border:1px solid var(--line);
+    cursor:zoom-in; transition:outline-color .15s; background:#fff;
+    outline:2px solid transparent; outline-offset:2px;
+  }
+  img.shot:hover, img.shot:focus-visible{outline-color:var(--accent)}
+  figcaption{display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-size:13px; padding:9px 4px 2px}
+  figcaption .hint{white-space:nowrap}
+  /* ---------- лайтбокс ---------- */
+  #lightbox{position:fixed; inset:0; z-index:50; display:flex; flex-direction:column; background:rgba(22,21,18,.93)}
+  #lightbox[hidden]{display:none}
+  .lb-top{
+    display:flex; align-items:center; gap:10px; padding:10px 16px;
+    background:var(--panel); border-bottom:2px solid var(--accent);
+  }
+  #lb-label{color:#fff; font-size:14px; font-weight:700; margin-right:auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .lb-btn{
+    background:var(--panel2); color:#EDEDEF; border:1px solid #3A3F45;
+    border-radius:8px; padding:7px 14px; font-size:13px; cursor:pointer;
+  }
+  .lb-btn:hover{border-color:var(--accent); color:var(--accent)}
+  #lb-close{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700}
+  #lb-close:hover{background:var(--accent-dark)}
+  /* фон: клик закрывает; курсор — лупа с минусом в цвет акцента */
+  .lb-stage{
+    flex:1; overflow:auto; display:flex; padding:26px;
+    cursor:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='30'%20height='30'%20viewBox='0%200%2030%2030'%3E%3Ccircle%20cx='12'%20cy='12'%20r='8'%20fill='none'%20stroke='%23FF6B2C'%20stroke-width='2.5'/%3E%3Cline%20x1='8'%20y1='12'%20x2='16'%20y2='12'%20stroke='%23FF6B2C'%20stroke-width='2.5'/%3E%3Cline%20x1='18'%20y1='18'%20x2='26'%20y2='26'%20stroke='%23FF6B2C'%20stroke-width='3'%20stroke-linecap='round'/%3E%3C/svg%3E") 15 15, pointer;
+  }
+  #lb-img{margin:auto; max-width:100%; max-height:100%; border-radius:6px; box-shadow:0 20px 60px rgba(0,0,0,.5); background:#fff; cursor:default}
+  /* белые стрелки листания внутри раздела */
+  .lb-nav{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:5;
+    background:transparent; border:0; padding:12px; cursor:pointer;
+    opacity:.8; transition:opacity .15s, transform .15s;
+  }
+  .lb-nav:hover{opacity:1; transform:translateY(-50%) scale(1.1)}
+  .lb-nav svg{display:block; filter:drop-shadow(0 2px 8px rgba(0,0,0,.7))}
+  #lb-prev{left:12px}
+  #lb-next{right:12px}
+  .lb-nav[hidden]{display:none}
+  /* ---------- подвал ---------- */
+  footer{background:var(--panel); margin-top:40px; padding:26px 24px 30px; color:#9AA0A6}
+  .foot-in{
+    max-width:1160px; margin:0 auto; display:flex; flex-wrap:wrap;
+    gap:18px; align-items:center; justify-content:space-between;
+  }
+  .theme-switch{display:flex; align-items:center; gap:9px}
+  .ts-label{color:#9AA0A6; font-size:13px}
+  .ts-btn{
+    width:24px; height:24px; border-radius:50%; padding:0; cursor:pointer;
+    border:2px solid #3A3F45; transition:box-shadow .15s,border-color .15s;
+  }
+  .ts-btn[data-theme="orange"]{background:#FF6B2C}
+  .ts-btn[data-theme="blue"]{background:#93B2CD}
+  .ts-btn[data-theme="brown"]{background:#837363}
+  .ts-btn:hover{border-color:#EDEDEF}
+  .ts-btn.active{border-color:#FFFFFF; box-shadow:0 0 0 2px var(--accent)}
+  .foot-note{font-size:15px}
+  .foot-note a{color:var(--accent); font-weight:700; text-decoration:none}
+  .foot-note a:hover{text-decoration:underline}
+  @media (max-width:640px){
+    .badge{display:none}
+    .shots{grid-template-columns:1fr}
+    .foot-in{justify-content:center}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">SIM<b>ONIX</b><small>РОБОМАРКЕТ</small></div>
+  <a class="chip" href="#main">Главная страница</a>
+  <a class="chip" href="#card">Карточка товара</a>
+  <a class="chip" href="#seller">Кабинет продавца</a>
+  <a class="chip" href="#edit">Редактирование товара</a>
+  <span class="badge">пробный дизайн</span>
+</header>
+
+<div class="hero">
+  <h1>Первичный пробный дизайн будущей платформы.</h1>
+  <p class="sub">Ниже — демо-макеты экранов платформы. <b>Нажмите на картинку</b> — она раскроется, вписанная в экран; белые стрелки по бокам листают скрины раздела; закрыть — кликом по фону (лупа с минусом) или клавишей Esc.</p>
+</div>
+
+<!-- ================= 01 ГЛАВНАЯ СТРАНИЦА ================= -->
+<section id="main">
+  <div class="sec-head"><span class="num">01</span><h2>Главная страница</h2></div>
+  <div class="rule"></div>
+  <p class="desc">Каталог позволяет выбрать рыночный сектор. Есть возможность выбора по сферам применения и условиям эксплуатации. Можно ставить сразу несколько галочек. Также есть финансовые варианты приобретения — например, выбор тех роботов, у которых есть услуга приобретения в лизинг. Левая панель может скрываться, освобождая пространство. Можно вызвать динамическое окно ИИ, которое также при желании закрепляется справа. Вход в кабинеты и регистрация.</p>
+  <div class="shots" data-prefix="main" data-layout="home" data-title="Главная страница"></div>
+</section>
+
+<!-- ================= 02 КАРТОЧКА ТОВАРА ================= -->
+<section id="card">
+  <div class="sec-head"><span class="num">02</span><h2>Карточка товара</h2></div>
+  <div class="rule"></div>
+  <p class="desc">Отображение товара. Описание, характеристики, возможность скачать документы, видеодемонстрация, условия приобретения, программное обеспечение, техуслуги, дополнительные модули — всё это добавляется продавцом на карточку товара. Цена общая и цена сложенная отображаются автоматически. Выход на продавца. Возможность отложить вариант робота к себе в кабинет. Возможность скрыть и показать товары по параметрам. И т.д.</p>
+  <div class="shots" data-prefix="card" data-layout="card" data-title="Карточка товара"></div>
+</section>
+
+<!-- ================= 03 КАБИНЕТ ПРОДАВЦА ================= -->
+<section id="seller">
+  <div class="sec-head"><span class="num">03</span><h2>Кабинет продавца</h2></div>
+  <div class="rule"></div>
+  <p class="desc">Является интерактивным кабинетом продавца, который настраивается самим продавцом. Им создаются свои папки разного цвета. В будущем будет связь со складами. При нажатии на карточку — выход в окно редактирования товара. При альтернативном нажатии — появление правого окна, где отображаются закреплённые за ним документы, услуги, покупатели. Есть возможность оставлять комментарии для себя, для команды. Блокирование просмотра документов или комментариев. Есть вызов графиков. Постановка задач. Получение связи с покупателем (стол переговоров или мессенджер). В этих кабинетах много функционала появится в будущем.</p>
+  <div class="shots" data-prefix="seller" data-layout="seller" data-title="Кабинет продавца"></div>
+</section>
+
+<!-- ============ 04 РЕЖИМ РЕДАКТИРОВАНИЯ ТОВАРА ============ -->
+<section id="edit">
+  <div class="sec-head"><span class="num">04</span><h2>Режим редактирования товара</h2></div>
+  <div class="rule"></div>
+  <p class="desc">Страница во многом завязана на кабинет продавца, на его папки и то, что уже есть. Продавец выбирает либо товар из папок, либо создаёт новый и сохраняет в нужные папки. Добавляет сам товар, модули, обслуживание, возможные варианты приобретения, видеодемонстрацию, сертификаты, гарантию и т.п. Настраивает карточку так, как её будет видеть покупатель на карточке товара.</p>
+  <div class="shots" data-prefix="edit" data-layout="edit" data-title="Режим редактирования товара"></div>
+</section>
+
+<footer>
+  <div class="foot-in">
+    <div class="theme-switch" role="group" aria-label="Цвет акцента">
+      <span class="ts-label">Цвет акцента:</span>
+      <button type="button" class="ts-btn active" data-theme="orange" title="Оранжевый #FF6B2C (текущий)"></button>
+      <button type="button" class="ts-btn" data-theme="blue" title="Голубой #93B2CD"></button>
+      <button type="button" class="ts-btn" data-theme="brown" title="Серо-коричневый #837363"></button>
+    </div>
+    <span class="foot-note">Описание проекта: <a href="http://Simonix.ru">Simonix.ru</a></span>
+  </div>
+</footer>
+
+<!-- ================= лайтбокс ================= -->
+<div id="lightbox" hidden>
+  <div class="lb-top">
+    <span id="lb-label"></span>
+    <button class="lb-btn" id="lb-close" type="button">Закрыть ×</button>
+  </div>
+  <div class="lb-stage" id="lb-stage">
+    <img id="lb-img" alt="">
+  </div>
+  <button class="lb-nav" id="lb-prev" type="button" title="Предыдущий скрин раздела" aria-label="Предыдущий">
+    <svg width="34" height="60" viewBox="0 0 34 60"><path d="M28 4 L8 30 L28 56" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="lb-nav" id="lb-next" type="button" title="Следующий скрин раздела" aria-label="Следующий">
+    <svg width="34" height="60" viewBox="0 0 34 60"><path d="M6 4 L26 30 L6 56" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============================================================
+   Общие генераторы: заглушка-макет и курсор-лупа (в цвет акцента)
+============================================================ */
+var ACCENT='#FF6B2C';
+function phBlocks(layout){
+  if(layout==='card')  return [[60,130,640,590,'#FFFFFF'],[730,130,490,300,'#FFFFFF'],[730,460,490,260,'#2A2D31']];
+  if(layout==='seller')return [[0,74,300,726,'#2A2D31'],[340,130,880,180,'#FFFFFF'],[340,340,430,380,'#FFFFFF'],[800,340,420,380,'#FFFFFF']];
+  if(layout==='edit')  return [[0,74,280,726,'#2A2D31'],[320,130,560,590,'#FFFFFF'],[910,130,310,590,'#FFFFFF']];
+  return [[60,130,720,300,'#FFFFFF'],[810,130,410,300,'#2A2D31'],[60,470,360,250,'#FFFFFF'],[450,470,360,250,'#FFFFFF'],[840,470,380,250,'#FFFFFF']];
+}
+function ph(label,layout,accent){
+  var W=1280,H=800,ac=accent||ACCENT;
+  var s='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">'
+    +'<rect width="'+W+'" height="'+H+'" fill="#F2EFEA"/>'
+    +'<rect width="'+W+'" height="70" fill="#26272A"/><rect y="70" width="'+W+'" height="4" fill="'+ac+'"/>'
+    +'<circle cx="46" cy="35" r="11" fill="'+ac+'"/>'
+    +'<rect x="70" y="22" width="150" height="12" rx="6" fill="#FFFFFF"/>'
+    +'<rect x="70" y="42" width="90" height="7" rx="3.5" fill="#5A5F66"/>'
+    +'<rect x="'+(W-260)+'" y="20" width="100" height="30" rx="8" fill="#2A2D31"/>'
+    +'<rect x="'+(W-140)+'" y="20" width="100" height="30" rx="8" fill="#2A2D31"/>';
+  phBlocks(layout).forEach(function(b){
+    s+='<rect x="'+b[0]+'" y="'+b[1]+'" width="'+b[2]+'" height="'+b[3]+'" rx="10" fill="'+b[4]+'"'+(b[4]==='#FFFFFF'?' stroke="#DED8CC" stroke-width="2"':'')+'/>';
+  });
+  s+='<rect x="20" y="94" width="'+(W-40)+'" height="'+(H-114)+'" rx="14" fill="none" stroke="'+ac+'" stroke-width="2" stroke-dasharray="12 8"/>';
+  var bw=780,bh=180,bx=(W-bw)/2,by=(H-bh)/2;
+  s+='<rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+bh+'" rx="16" fill="#26272A" opacity="0.94"/>'
+    +'<text x="'+(W/2)+'" y="'+(by+66)+'" text-anchor="middle" fill="#FFFFFF" font-family="Arial,sans-serif" font-size="42" font-weight="bold" letter-spacing="6">ЗАГЛУШКА</text>'
+    +'<text x="'+(W/2)+'" y="'+(by+110)+'" text-anchor="middle" fill="'+ac+'" font-family="Arial,sans-serif" font-size="25" font-weight="bold">'+label+'</text>'
+    +'<text x="'+(W/2)+'" y="'+(by+148)+'" text-anchor="middle" fill="#9AA0A6" font-family="Arial,sans-serif" font-size="19">место для вашего скриншота · клик — открыть</text>'
+    +'</svg>';
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
+}
+function makeCursor(accent){
+  var c=(accent||ACCENT).replace('#','%23');
+  return 'url("data:image/svg+xml,%3Csvg%20xmlns=\'http://www.w3.org/2000/svg\'%20width=\'30\'%20height=\'30\'%20viewBox=\'0%200%2030%2030\'%3E%3Ccircle%20cx=\'12\'%20cy=\'12\'%20r=\'8\'%20fill=\'none\'%20stroke=\''+c+'\'%20stroke-width=\'2.5\'/%3E%3Cline%20x1=\'8\'%20y1=\'12\'%20x2=\'16\'%20y2=\'12\'%20stroke=\''+c+'\'%20stroke-width=\'2.5\'/%3E%3Cline%20x1=\'18\'%20y1=\'18\'%20x2=\'26\'%20y2=\'26\'%20stroke=\''+c+'\'%20stroke-width=\'3\'%20stroke-linecap=\'round\'/%3E%3C/svg%3E") 15 15, pointer';
+}
+
+/* ============================================================
+   Сетка скриншотов: подхватывает любое число файлов в разделе.
+   Пока файлов нет — рисуется заглушка-макет.
+============================================================ */
+(function(){
+  var MAX=12;
+  function probe(src){
+    return new Promise(function(res){
+      var im=new Image();
+      im.onload=function(){res(true);};
+      im.onerror=function(){res(false);};
+      im.src=src;
+    });
+  }
+  function makeFigure(src,label,layout,isPh){
+    var fig=document.createElement('figure'); fig.className='shotwrap';
+    var img=document.createElement('img'); img.className='shot';
+    img.src=src; img.alt=label; img.dataset.label=label; img.dataset.layout=layout;
+    if(isPh) img.dataset.ph='1';
+    var cap=document.createElement('figcaption');
+    cap.innerHTML='<span>'+label+'</span><span class="hint">🔍 клик — раскрыть</span>';
+    fig.appendChild(img); fig.appendChild(cap);
+    return fig;
+  }
+  document.querySelectorAll('.shots[data-prefix]').forEach(function(box){
+    var prefix=box.dataset.prefix, layout=box.dataset.layout, title=box.dataset.title;
+    var srcs=[]; for(var i=1;i<=MAX;i++) srcs.push('screens/'+prefix+'-'+i+'.png');
+    Promise.all(srcs.map(probe)).then(function(results){
+      var loaded=[]; results.forEach(function(ok,i){ if(ok) loaded.push(i+1); });
+      if(loaded.length){
+        loaded.forEach(function(n){
+          box.appendChild(makeFigure('screens/'+prefix+'-'+n+'.png', title+' · скрин '+n, layout, false));
+        });
+      }else{
+        box.appendChild(makeFigure(ph(title+' · скрин 1',layout), title+' · скрин 1', layout, true));
+      }
+      if(box.children.length===1) box.classList.add('single');
+      document.dispatchEvent(new Event('shots-ready'));
+    });
+  });
+})();
+
+/* ---------- лайтбокс: вписанный просмотр + листание раздела ---------- */
+(function(){
+  var lb=document.getElementById('lightbox'),
+      stage=document.getElementById('lb-stage'),
+      img=document.getElementById('lb-img'),
+      label=document.getElementById('lb-label'),
+      btnClose=document.getElementById('lb-close'),
+      btnPrev=document.getElementById('lb-prev'),
+      btnNext=document.getElementById('lb-next'),
+      list=[], cur=0;
+
+  function show(i){
+    cur=(i+list.length)%list.length;
+    var el=list[cur];
+    img.src=el.src; img.alt=el.alt;
+    label.textContent=el.dataset.label||el.alt;
+  }
+  function open(el){
+    list=Array.prototype.slice.call(el.closest('.shots').querySelectorAll('img.shot'));
+    var solo=list.length<2;
+    btnPrev.hidden=solo; btnNext.hidden=solo;
+    show(list.indexOf(el));
+    lb.hidden=false;
+    document.body.style.overflow='hidden';
+  }
+  function close(){
+    lb.hidden=true;
+    document.body.style.overflow='';
+  }
+  function bind(){
+    document.querySelectorAll('img.shot').forEach(function(el){
+      if(el.dataset.bound) return; el.dataset.bound='1';
+      el.setAttribute('role','button');
+      el.setAttribute('tabindex','0');
+      el.addEventListener('click',function(){open(el);});
+      el.addEventListener('keydown',function(e){
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();open(el);}
+      });
+    });
+  }
+  bind();
+  document.addEventListener('shots-ready',bind);
+
+  btnClose.addEventListener('click',close);
+  btnPrev.addEventListener('click',function(e){e.stopPropagation();show(cur-1);});
+  btnNext.addEventListener('click',function(e){e.stopPropagation();show(cur+1);});
+  stage.addEventListener('click',function(e){ if(e.target===stage) close(); });
+  document.addEventListener('keydown',function(e){
+    if(lb.hidden) return;
+    if(e.key==='Escape') close();
+    else if(e.key==='ArrowLeft'&&list.length>1) show(cur-1);
+    else if(e.key==='ArrowRight'&&list.length>1) show(cur+1);
+  });
+})();
+
+/* ---------- переключатель цвета акцента в подвале ---------- */
+(function(){
+  var THEMES={
+    orange:{a:'#FF6B2C', d:'#E85A1D'},
+    blue:  {a:'#93B2CD', d:'#7A99B6'},
+    brown: {a:'#837363', d:'#6A5C4D'}
+  };
+  function applyTheme(name){
+    var t=THEMES[name]; if(!t) return;
+    ACCENT=t.a;
+    var rs=document.documentElement.style;
+    rs.setProperty('--accent',t.a);
+    rs.setProperty('--accent-dark',t.d);
+    /* лупа-курсор на фоне лайтбокса перекрашиваем сразу */
+    document.getElementById('lb-stage').style.cursor=makeCursor(t.a);
+    /* заглушки перерисовываем в новый акцент; ваши скрины не трогаем */
+    document.querySelectorAll('img.shot[data-ph]').forEach(function(im){
+      im.src=ph(im.dataset.label||'ЗАГЛУШКА', im.dataset.layout||'home', t.a);
+    });
+    document.querySelectorAll('.ts-btn').forEach(function(b){
+      b.classList.toggle('active', b.dataset.theme===name);
+    });
+  }
+  document.querySelectorAll('.ts-btn').forEach(function(b){
+    b.addEventListener('click',function(){applyTheme(b.dataset.theme);});
+  });
+})();
+</script>
+</body>
+</html>
